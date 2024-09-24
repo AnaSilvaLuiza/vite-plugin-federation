@@ -1,0 +1,99 @@
+import { Meta } from '@storybook/blocks';
+import { PluralExamples } from './plurals-examples/plural-examples';
+
+<Meta title="Internationalization/Plurals" />
+
+# Handling Plurals in Internationalization
+
+Properly handling plurals is crucial for creating natural-sounding translations across different languages. This guide explains how to implement plural forms using i18next this application.
+
+## Creating Plural Keys
+
+To handle plurals effectively, you need to create translation keys with specific suffixes. i18next supports the following plural forms:
+
+- `zero`: Used for 0 items
+- `one`: Used for 1 item
+- `two`: Used for 2 items
+- `few`: Used for a small number of items (varies by language)
+- `many`: Used for a large number of items (varies by language)
+- `other`: Used as a fallback and for any other quantity
+
+Here's an example of how to define plural forms in your translation JSON file:
+
+```json
+// common.json
+{
+  "books_count_zero": "No books",
+  "books_count_one": "One book",
+  "books_count_other": "{{count}} books",
+  "item_count_one": "{{count}} item",
+  "item_count_other": "{{count}} items"
+}
+```
+
+## Using Plural Forms in React Components
+
+To use these plural forms in your React components, you can use the `useTranslation` hook from react-i18next:
+
+```typescript
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+
+const MyComponent: React.FC = () => {
+  const { t } = useTranslation();
+
+  return (
+    <div className="flex flex-col gap-half">
+      <span>{t('books_count', { count: 0 })}</span> {/* Outputs: "No books" */}
+      <span>{t('books_count', { count: 1 })}</span> {/* Outputs: "One book" */}
+      <span>{t('books_count', { count: 2 })}</span> {/* Outputs: "2 books" */}
+      <span>{t('item_count', { count: 0 })}</span> {/* Outputs: "0 items" */}
+      <span>{t('item_count', { count: 1 })}</span> {/* Outputs: "1 item" */}
+      <span>{t('item_count', { count: 2 })}</span> {/* Outputs: "2 items" */}
+    </div>
+  );
+};
+
+export default MyComponent;
+```
+
+Note that i18next automatically selects the appropriate plural form based on the count value you provide.
+
+## Live example
+
+Here's a live example demonstrating plural handling:
+
+<PluralExamples />
+
+## Advanced Plural Handling
+
+### Ordinal Plurals
+
+For ordinal plurals (e.g., 1st, 2nd, 3rd), you'll need to use a different approach. i18next provides an ordinal suffix for this purpose. Here's a quick example:
+
+```json
+{
+  "position_ordinal_one": "{{count}}st",
+  "position_ordinal_two": "{{count}}nd",
+  "position_ordinal_few": "{{count}}rd",
+  "position_ordinal_other": "{{count}}th"
+}
+```
+
+```typescript
+t('position_ordinal', { count: 1, ordinal: true }); // Outputs: "1st"
+t('position_ordinal', { count: 2, ordinal: true }); // Outputs: "2nd"
+t('position_ordinal', { count: 3, ordinal: true }); // Outputs: "3rd"
+t('position_ordinal', { count: 4, ordinal: true }); // Outputs: "4th"
+```
+
+### Language-Specific Plural Rules
+
+Remember that different languages have different plural rules. i18next handles this automatically based on the current language, but you may need to provide appropriate translations for all relevant plural forms in each language.
+
+## Further Reading
+
+For more detailed information and advanced usage, check out these resources:
+
+- [i18next Plurals Documentation](https://www.i18next.com/translation-function/plurals)
+- [Comprehensive Guide to Pluralization with i18next in React](https://medium.com/@meleklassoued/implementing-pluralization-with-i18next-in-react-a-complete-guide-79fdf2418b38)

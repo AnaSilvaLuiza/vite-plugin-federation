@@ -1,0 +1,12 @@
+{
+  "name": "platform-services",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/platform-services/src",
+  "projectType": "application",
+  "tags": ["type:application"],
+  "targets": {
+    "serve-static": {
+      "command": "npx nx run platform-services:build --base=/ && npx http-server dist/apps/platform-services -p 4200"
+    }
+  }
+}

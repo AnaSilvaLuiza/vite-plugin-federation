@@ -1,0 +1,26 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "resolveJsonModule": true,
+    "target": "es2015",
+    "module": "esnext",
+    "lib": ["es2020", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@platform-services-ui/constants": ["constants/index.ts"],
+      "@platform-services-ui/i18n-utils": ["libs/i18n-utils/src/index.ts"],
+      "@platform-services-ui/i18n-utils/assets/*": ["libs/i18n-utils/src/assets/*"],
+      "@platform-services-ui/i18n-utils/i18n-configuration": ["libs/i18n-utils/src/i18n-configuration.tsx"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}

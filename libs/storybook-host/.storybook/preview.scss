@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import '@olmero/common-ui/index.css';
+
+body {
+  padding: 0 !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  height: 100vh;
+  overflow: auto;
+}
+
+#storybook-docs {
+  font-family: 'Alaska', sans-serif !important;
+}
+
+#storybook-root {
+  height: 100%;
+  padding: 1rem;
+}

@@ -1,0 +1,32 @@
+{
+  "name": "storybook-host",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/storybook-host/src",
+  "projectType": "library",
+  "tags": ["type:application"],
+  "targets": {
+    "storybook": {
+      "executor": "@nx/storybook:storybook",
+      "options": {
+        "port": 4400,
+        "configDir": "libs/storybook-host/.storybook",
+        "noOpen": true
+      }
+    },
+    "build-storybook": {
+      "builder": "@storybook/react:build-storybook",
+      "options": {
+        "output-dir": "../../dist/storybook"
+      }
+    },
+    "static-storybook": {
+      "command": "npx nx run storybook-host:build-storybook && npx http-server dist/storybook -p 4300"
+    },
+    "test-storybook": {
+      "options": {
+        "url": "http://localhost:4400"
+      }
+    }
+  },
+  "implicitDependencies": ["platform-services"]
+}

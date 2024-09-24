@@ -1,0 +1,76 @@
+{
+  "bfg": {
+    "brand": {
+      "primary": "#DE265D",
+      "secondary": "#0F0A30"
+    },
+    "cta": {
+      "primary": "#DE265D",
+      "secondary": "#0F0A30",
+      "disabled": "#F5F5F5"
+    },
+    "int": {
+      "primary": "#6B002B",
+      "secondary": "#6F6B2D",
+      "tertiary": "#C8C9BC",
+      "warning": "#960500"
+    },
+    "add": {
+      "failure": "#AF130E",
+      "warning": "#FB8B02",
+      "success": "#4BB45A",
+      "outline": "#618da3",
+      "highlight": "#FDCC0B"
+    },
+    "text": {
+      "primary": "#333333",
+      "secondary": "#226d7c",
+      "light": "#f1f1f1",
+      "hint": "#737373",
+      "pending": "#737373",
+      "disabled": "#757575"
+    },
+    "utility": {
+      "grey-dark": "#737373",
+      "grey": "#DBE0DE",
+      "grey-80": "#E2E5E4",
+      "grey-60": "#EAEAEA",
+      "grey-40": "#eff0ef",
+      "grey-25": "#f9f9f9",
+      "grey-20": "#f6f6f5",
+      "scroll": "#C1C1C1"
+    }
+  },
+  "white": "#f1f1f1",
+  "black": "#333333",
+  "paper": {
+    "elevation": {
+      "0": "#fffbff",
+      "1": "#fbeeee",
+      "2": "#ece0e0",
+      "3": "#cfc4c4",
+      "4": "#b4a9a9",
+      "5": "#988e8f",
+      "6": "#7e7575",
+      "7": "#655c5d",
+      "8": "#4d4545",
+      "9": "#362f2f",
+      "10": "#201a1b"
+    }
+  },
+  "success": {
+    "dark": "#1b5e20",
+    "light": "#4caf50",
+    "main": "#2e7d32"
+  },
+  "error": {
+    "dark": "#c62828",
+    "light": "#ef5350",
+    "main": "#d32f2f"
+  },
+  "info": {
+    "dark": "#01579b",
+    "light": "#03a9f4",
+    "main": "#0288d1"
+  }
+}

@@ -1,0 +1,137 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions: write-all
+
+env:
+  SERVICE_NAME: platform-services
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Cache node_modules
+      - name: 'Setup node'
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@olmero'
+          cache: 'npm'
+
+      - name: 'Install dependencies'
+        run: npm ci
+
+      - name: 'Set SHAs for dependencies'
+        uses: nrwl/nx-set-shas@v4
+
+      - name: 'Fetch translations'
+        env:
+          POEDITOR_API_TOKEN: ${{ secrets.POEDITOR_API_TOKEN }}
+          POEDITOR_PROJECT_ID: ${{ secrets.POEDITOR_PROJECT_ID }}
+        run: npm run import-translations
+
+      - name: 'Lint'
+        run: npm run lint:affected
+
+      - name: 'Test'
+        run: npm run test:affected
+
+      - name: 'Build'
+        run: npm run build
+
+      - name: 'Storybook build - Common UI'
+        run: npm run common-ui-build-storybook
+
+      - name: 'Storybook build - Platform Services'
+        run: npm run storybook-host-build-storybook
+
+      - name: 'Publish Common UI Storybook to Chromatic'
+        uses: chromaui/action@latest
+        with:
+          storybookBuildDir: dist/libs/shared/common-ui-storybook
+          projectToken: ${{ secrets.CHROMATIC_COMMON_UI_PROJECT_TOKEN }}
+          skip: 'dependabot/**'
+          autoAcceptChanges: 'main'
+          exitZeroOnChanges: true
+
+      - name: 'Publish Platform Services Storybook to Chromatic'
+        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/test'
+        uses: chromaui/action@latest
+        with:
+          storybookBuildDir: dist/storybook
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          skip: 'dependabot/**'
+          autoAcceptChanges: 'main'
+          exitZeroOnChanges: true
+
+      - name: Cache the Generated artifacts for the docker workflow
+        uses: actions/cache@v3
+        with:
+          path: |
+            dist
+            server
+            Dockerfile
+          key: build-cache-${{ github.sha }}
+
+  setup-service-name:
+    runs-on: ubuntu-latest
+
+    outputs:
+      SERVICE_NAME: ${{ steps.set-service-name.outputs.service-name }}
+    steps:
+      - name: 'Set Service'
+        if: ${{ github.ref == 'refs/heads/main' ||  github.ref == 'refs/heads/test' }}
+        id: set-service-name
+        run: echo "service-name=${{ env.SERVICE_NAME }}" >> "${GITHUB_OUTPUT}"
+
+  docker-publish:
+    uses: olmero/olmero-github-workflows/.github/workflows/docker-image-push.yml@main
+    if: ${{ github.ref == 'refs/heads/main' ||  github.ref == 'refs/heads/test' }}
+    needs:
+      - setup-service-name
+      - build
+    with:
+      image-name: ${{ needs.setup-service-name.outputs.SERVICE_NAME }}
+      docker-context: .
+      docker-file: ./Dockerfile
+      restore-paths: |
+        dist
+        server
+        Dockerfile
+    secrets: inherit
+
+  deploy-test:
+    uses: olmero/olmero-github-workflows/.github/workflows/trigger-deployment.yml@main
+    if: ${{ github.ref == 'refs/heads/main' }}
+    needs:
+      - setup-service-name
+      - docker-publish
+    with:
+      target-environment: test
+      values-file: values-image-tags-test.yaml
+      service-name: ${{ needs.setup-service-name.outputs.SERVICE_NAME }}
+    secrets: inherit
+
+  # the services project's production deploys to expy-testing
+  deploy-production:
+    uses: olmero/olmero-github-workflows/.github/workflows/trigger-deployment.yml@main
+    if: ${{ github.ref == 'refs/heads/main' }}
+    needs:
+      - setup-service-name
+      - docker-publish
+    with:
+      target-environment: production
+      values-file: values-image-tags-production.yaml
+      service-name: ${{ needs.setup-service-name.outputs.SERVICE_NAME }}
+      services-repository-name: olmero/expy-kubernetes-services
+    secrets: inherit

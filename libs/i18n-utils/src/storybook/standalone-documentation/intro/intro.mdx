@@ -1,0 +1,60 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Internationalization/Intro" />
+
+# Internationalization: Import, Export, and Sync
+
+This guide explains how to set up and use the internationalization (i18n) tools for importing, exporting, and syncing translations in your project.
+
+## Setup
+
+1. Create a `.env` file in the `libs/i18n-utils` folder.
+2. Copy the contents of `.env.example` into your new `.env` file.
+3. Replace the placeholder values with your actual POEditor credentials (this is a one time setup, since the .env is in .gitignore):
+
+```shell
+POEDITOR_API_TOKEN=YOUR_API_TOKEN_HERE
+POEDITOR_PROJECT_ID=YOUR_PROJECT_ID_HERE
+```
+
+Scripts for importing and exporting terms:
+
+```shell
+# Import translation files on libs/i18n-utils/src/assets/locales
+npm run import-translations;
+# This script runs the extraction of keys with i18n-scanner then the export via export-translations
+npm run i18n-sync;
+```
+
+## Available Scripts
+
+We provide some npm scripts to manage your translations:
+
+### Import Translations
+
+To import translation files into the `libs/i18n-utils/src/assets/locales` directory:
+
+```shell
+npm run import-translations
+```
+
+This script fetches the latest translations from POEditor and updates your local files.
+
+### Sync Translations
+
+To extract new translation keys and export them to POEditor:
+
+```shell
+npm run i18n-sync
+```
+
+This script performs two main tasks:
+
+1. It scans your project for new translation keys using i18n-scanner.
+2. It then exports these keys to POEditor using the export-translations script.
+
+## Best Practices
+
+- Run npm run import-translations regularly to keep your local translations up-to-date.
+- After adding new strings to your code that need translation, run npm run i18n-sync to update POEditor with the new keys.
+- Always commit your updated translation files to version control after running these scripts.

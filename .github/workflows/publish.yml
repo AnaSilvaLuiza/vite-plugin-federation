@@ -1,0 +1,61 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - '**'
+
+permissions: write-all
+
+jobs:
+  publish-package:
+    name: Publish package to GitHub Packages
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Cache node_modules
+      - name: 'Setup node'
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@olmero'
+          cache: 'npm'
+
+      - name: 'Install dependencies'
+        run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 'Build'
+        run: npm run build
+
+      - name: 'Print Environment Info'
+        run: npx nx report
+        shell: bash
+
+      - name: 'Publish Package - NX React Plugin'
+        if: startsWith(github.ref_name, 'nx-react-plugin')
+        run: npm publish dist/libs/shared/nx-react-plugin
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 'Publish Package - Core'
+        if: startsWith(github.ref_name, 'core')
+        run: npm publish dist/libs/shared/core
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 'Publish Package - Common UI'
+        if: startsWith(github.ref_name, 'common-ui')
+        run: npm publish dist/libs/shared/common-ui
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

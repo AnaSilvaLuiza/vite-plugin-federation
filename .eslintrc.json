@@ -1,0 +1,101 @@
+{
+  "root": true,
+  "ignorePatterns": ["**/*"],
+  "extends": ["prettier"],
+  "plugins": ["@nx", "prettier"],
+  "rules": {
+    "prettier/prettier": "error"
+  },
+  "overrides": [
+    {
+      "files": "*.json",
+      "parser": "jsonc-eslint-parser",
+      "rules": {}
+    },
+    {
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "rules": {
+        "@nx/enforce-module-boundaries": [
+          "error",
+          {
+            "enforceBuildableLibDependency": true,
+            "allow": ["@platform-services-ui/**", "../../tailwind.config"],
+            "depConstraints": [
+              {
+                "sourceTag": "type:application",
+                "onlyDependOnLibsWithTags": ["scope:shared"]
+              },
+              {
+                "sourceTag": "type:feature",
+                "onlyDependOnLibsWithTags": ["type:feature", "scope:shared"]
+              },
+              {
+                "sourceTag": "type:core",
+                "onlyDependOnLibsWithTags": ["type:core"]
+              },
+              {
+                "sourceTag": "type:ui",
+                "onlyDependOnLibsWithTags": ["type:ui", "type:core"]
+              },
+              {
+                "sourceTag": "type:utility",
+                "onlyDependOnLibsWithTags": ["type:utility", "type:ui", "type:core"]
+              },
+              {
+                "sourceTag": "scope:shared",
+                "onlyDependOnLibsWithTags": ["scope:shared"]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["*.ts", "*.tsx"],
+      "extends": ["plugin:@nx/typescript", "plugin:@tanstack/eslint-plugin-query/recommended"],
+      "plugins": ["check-file", "react", "react-hooks", "@tanstack/query", "react-refresh"],
+      "rules": {
+        "check-file/filename-naming-convention": [
+          "error",
+          {
+            "**/*.{ts,tsx}": "KEBAB_CASE"
+          },
+          {
+            // ignore the middle extensions of the filename to support filename like bable.config.js or smoke.spec.ts
+            "ignoreMiddleExtensions": true
+          }
+        ],
+        "check-file/folder-naming-convention": [
+          "error",
+          {
+            // all folders within src (except __tests__ and __stories__)should be named in kebab-case
+            "**/!(__stories__)": "KEBAB_CASE",
+            "**/!(__tests__)": "KEBAB_CASE"
+          }
+        ],
+        "react/jsx-key": "error",
+        "react-hooks/rules-of-hooks": "error",
+        "@typescript-eslint/no-empty-function": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "react-refresh/only-export-components": "warn"
+      },
+      "settings": {
+        "react": {
+          "version": "detect"
+        }
+      }
+    },
+    {
+      "files": ["*.js", "*.jsx"],
+      "extends": ["plugin:@nx/javascript"],
+      "rules": {}
+    },
+    {
+      "files": ["*.spec.ts", "*.spec.tsx", "*.spec.js", "*.spec.jsx"],
+      "env": {
+        "jest": true
+      },
+      "rules": {}
+    }
+  ]
+}

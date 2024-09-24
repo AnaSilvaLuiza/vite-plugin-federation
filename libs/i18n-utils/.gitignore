@@ -1,0 +1,7 @@
+.env
+
+# Ignore all JSON files in subfolders of locales
+src/assets/locales/*/*.json
+
+# But don't ignore the locales directory itself or the index.ts file
+!src/assets/locales/index.ts
